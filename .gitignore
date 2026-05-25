@@ -1,0 +1,47 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+
+# Datasets & large files
+*.csv
+*.json
+*.jsonl
+*.parquet
+*.arrow
+*.jpg
+*.jpeg
+*.png
+*.dcm
+*.zip
+*.tar
+*.gz
+
+# Model outputs
+checkpoints/
+outputs/
+runs/
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AI tooling & context (never push)
+.claude/
+context/
+.python-version
