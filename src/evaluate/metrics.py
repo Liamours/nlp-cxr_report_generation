@@ -3,9 +3,9 @@ Evaluation metrics for CXR report generation.
 
 Metric groups
 ─────────────
-nlg        : BLEU-1/2/4, ROUGE-L, METEOR, CIDEr   (pure Python, fast)
+nlg        : BLEU-1/2/4, ROUGE-L, METEOR, CIDEr   (Rust if available, else pure Python)
 bertscore  : BERTScore P/R/F1                       (needs bert-base-uncased)
-chexbert   : CheXbert-approx micro/macro F1         (rule-based, fast)
+chexbert   : CheXbert-approx micro/macro F1         (Rust if available, else rule-based Python)
 
 Entry points
 ────────────
@@ -18,6 +18,12 @@ from __future__ import annotations
 import math
 from collections import Counter
 from typing import Sequence
+
+try:
+    import nlp_cxr_rs as _rs
+    _RUST_AVAILABLE = True
+except ImportError:
+    _RUST_AVAILABLE = False
 
 
 # ---- tokenization ----------------------------------------------------------
@@ -227,12 +233,23 @@ def cider(
     return score / n_max
 
 
-# ---- NLG metrics (pure Python) --------------------------------------------
+# ---- NLG metrics (Rust-accelerated with Python fallback) -------------------
 
 def nlg_metrics(
     hypotheses: Sequence[str],
     references: Sequence[str | Sequence[str]],
 ) -> dict[str, float]:
+    flat_refs = [r if isinstance(r, str) else r[0] for r in references]
+    if _RUST_AVAILABLE:
+        bleu = _rs.corpus_bleu(list(hypotheses), flat_refs)
+        return {
+            "bleu_1":  round(bleu["bleu_1"], 2),
+            "bleu_2":  round(bleu["bleu_2"], 2),
+            "bleu_4":  round(bleu["bleu"],   2),   # geometric mean (BLEU-4 = overall BLEU)
+            "rouge_l": round(_rs.rouge_l(list(hypotheses), flat_refs), 2),
+            "meteor":  round(meteor(hypotheses, references) * 100, 2),
+            "cider":   round(cider(hypotheses, references)  * 10,  4),
+        }
     bleu = corpus_bleu(hypotheses, references)
     return {
         "bleu_1":  round(bleu["bleu_1"] * 100, 2),
@@ -272,16 +289,19 @@ def bertscore(
     }
 
 
-# ---- CheXbert (rule-based) -------------------------------------------------
+# ---- CheXbert (Rust-accelerated with Python fallback) ----------------------
 
 def chexbert_f1(
     hypotheses: Sequence[str],
     references: Sequence[str],
 ) -> dict[str, float]:
     """
-    Rule-based CheXbert-approximation F1 across 14 CheXpert conditions.
+    CheXbert-approximation F1 across 14 CheXpert conditions.
+    Uses Rust implementation when available, falls back to pure Python.
     Returns micro_f1, macro_f1, and per-label F1.
     """
+    if _RUST_AVAILABLE:
+        return _rs.chexbert_f1(list(hypotheses), list(references))
     from src.evaluate.chexpert_labeler import chexbert_f1 as _chexbert_f1
     return _chexbert_f1(list(hypotheses), list(references))
 

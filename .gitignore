@@ -50,6 +50,9 @@ result/figure_metric/
 .DS_Store
 Thumbs.db
 
+# Rust build artifacts
+nlp_cxr_rs/target/
+
 # AI tooling & context (never push)
 .claude/
 context/

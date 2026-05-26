@@ -3,27 +3,34 @@ Evaluate a trained checkpoint on the validation set.
 
 Usage:
     uv run python src/script/run_evaluate.py \
-        --checkpoint result/model_finetuned/epoch_000/model.pt \
-        --config configs/default.yaml \
+        --checkpoint result/swin_bert_chexpertplus-2605261127/epoch_002/model.pt \
+        --config configs/swin_bert_chexpertplus-2605261127.yaml \
+        --dataset mimiccxr \
         [--metrics nlg,chexbert,bertscore] \
         [--max-samples 1000] \
-        [--out result/eval_results.json]
+        [--out result/eval_swin_bert_chexpertplus_to_mimic-2605261127.json]
 
 Metric groups:
-    nlg        BLEU-1/2/4, ROUGE-L, METEOR, CIDEr   (fast, pure Python)
-    chexbert   CheXbert-approx micro/macro F1        (fast, rule-based)
+    nlg        BLEU-1/2/4, ROUGE-L, METEOR, CIDEr   (Rust-accelerated; Python fallback)
+    chexbert   CheXbert-approx micro/macro F1        (Rust-accelerated; Python fallback)
     bertscore  BERTScore P/R/F1                      (slow, downloads BERT)
 
 Default: nlg,chexbert
+
+Cross-dataset generalization:
+    Train on CheXpert+ → evaluate on MIMIC-CXR validate via --dataset mimiccxr.
 """
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import torch
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.data.chexpertplus.dataset import ChexpertPlusDataset
 from src.data.mimiccxr.dataset import MimicCxrDataset

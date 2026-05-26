@@ -1,0 +1,30 @@
+model:
+  encoder: swin_base            # swin_base | swin_large | vit_base | vit_large | dinov2_base | dinov2_large
+  decoder: bert                 # bert | clinicalbert | biobert | gpt2 | gpt2_medium
+  num_decoder_layers: 2
+  freeze_vision_epochs: 1       # freeze encoder epoch 1, unfreeze epoch 2
+
+dataset:
+  use: chexpertplus             # train on CheXpert+ → cross-dataset eval on MIMIC-CXR validate
+  max_seq_len: 128
+  image_size: 224
+  num_workers: 0
+
+training:
+  epochs: 2
+  batch_size: 8
+  grad_accum_steps: 4           # effective batch = 32
+  lr: 1.0e-4
+  vision_lr: 1.0e-5
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  bf16: true
+
+paths:
+  output_dir: result/swin_bert_chexpertplus-2605261127
+  log_dir: result/log/swin_bert_chexpertplus-2605261127
+
+checkpointing:
+  save_every: 1
+  keep_last: 3
