@@ -1,0 +1,30 @@
+model:
+  encoder: vit_base           # google/vit-base-patch16-224 — 196 patches, 768-dim
+  decoder: gpt2               # gpt2 — causal LM with cross-attention
+  num_decoder_layers: 4       # more layers since GPT-2 is causal (needs more capacity)
+  freeze_vision_epochs: 5     # ViT benefits from longer freeze
+
+dataset:
+  use: mimiccxr
+  max_seq_len: 128
+  image_size: 224
+  num_workers: 0
+
+training:
+  epochs: 20
+  batch_size: 8
+  grad_accum_steps: 4
+  lr: 5.0e-5                  # lower LR for GPT-2 decoder
+  vision_lr: 1.0e-5
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  bf16: true
+
+paths:
+  output_dir: result/vit_gpt2_mimic/checkpoints
+  log_dir: result/vit_gpt2_mimic/logs
+
+checkpointing:
+  save_every: 1
+  keep_last: 3

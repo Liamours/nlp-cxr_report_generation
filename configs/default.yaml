@@ -1,0 +1,30 @@
+model:
+  encoder: swin_base          # swin_base | swin_large | vit_base | vit_large | dinov2_base | dinov2_large
+  decoder: bert               # bert | clinicalbert | biobert | gpt2 | gpt2_medium
+  num_decoder_layers: 2
+  freeze_vision_epochs: 3     # freeze encoder for first N epochs, then unfreeze
+
+dataset:
+  use: mimiccxr               # mimiccxr | chexpertplus | combined
+  max_seq_len: 128
+  image_size: 224
+  num_workers: 0              # 0 = main process (safe on Windows; raise on Linux)
+
+training:
+  epochs: 20
+  batch_size: 8
+  grad_accum_steps: 4         # effective batch = batch_size * grad_accum_steps = 32
+  lr: 1.0e-4
+  vision_lr: 1.0e-5           # lower LR for encoder after unfreeze
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  bf16: true                  # RTX 4050 supports bf16
+
+paths:
+  output_dir: result/model_finetuned
+  log_dir: result/log
+
+checkpointing:
+  save_every: 1               # save checkpoint every N epochs
+  keep_last: 3                # keep last N checkpoints (+ epoch_000 = best)

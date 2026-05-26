@@ -29,6 +29,15 @@ outputs/
 runs/
 wandb/
 
+# Result — model weights and large logs never pushed
+result/model_finetuned/*
+!result/model_finetuned/.gitkeep
+result/log/
+result/*/checkpoints/
+result/*/logs/
+result/figure_analysis/
+result/figure_metric/
+
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb

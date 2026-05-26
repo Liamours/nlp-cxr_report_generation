@@ -1,0 +1,30 @@
+model:
+  encoder: swin_base
+  decoder: clinicalbert       # Bio_ClinicalBERT — domain-tuned on clinical notes
+  num_decoder_layers: 2
+  freeze_vision_epochs: 3
+
+dataset:
+  use: combined               # train on MIMIC + CheXpert+, validate on MIMIC
+  max_seq_len: 128
+  image_size: 224
+  num_workers: 0
+
+training:
+  epochs: 20
+  batch_size: 8
+  grad_accum_steps: 4
+  lr: 1.0e-4
+  vision_lr: 1.0e-5
+  weight_decay: 0.01
+  warmup_steps: 1000          # longer warmup for combined dataset
+  max_grad_norm: 1.0
+  bf16: true
+
+paths:
+  output_dir: result/swin_clinicalbert_combined/checkpoints
+  log_dir: result/swin_clinicalbert_combined/logs
+
+checkpointing:
+  save_every: 1
+  keep_last: 3
