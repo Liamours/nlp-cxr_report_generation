@@ -17,7 +17,8 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from transformers import PreTrainedTokenizerBase
 
-DATASET_ROOT = Path(r"C:\Users\lulay\Desktop\research-vlm_cxr\dataset\mimiccxr")
+import os
+DATASET_ROOT = Path(os.environ.get("MIMIC_ROOT", "data/mimiccxr"))
 IMG_MEAN = [0.485, 0.456, 0.406]
 IMG_STD  = [0.229, 0.224, 0.225]
 

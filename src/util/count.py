@@ -109,9 +109,10 @@ def print_report(dataset: str, preprocessed_root: Path):
 
 
 def run_all():
+    import os
     roots = {
-        "chexpertplus": Path(r"C:\Users\lulay\Desktop\research-vlm_cxr\dataset\chexpertplus\preprocessed"),
-        "mimiccxr":     Path(r"C:\Users\lulay\Desktop\research-vlm_cxr\dataset\mimiccxr\preprocessed"),
+        "chexpertplus": Path(os.environ.get("CHEXPERT_ROOT", "data/chexpertplus")) / "preprocessed",
+        "mimiccxr":     Path(os.environ.get("MIMIC_ROOT",   "data/mimiccxr"))     / "preprocessed",
     }
     for dataset, root in roots.items():
         print_report(dataset, root)

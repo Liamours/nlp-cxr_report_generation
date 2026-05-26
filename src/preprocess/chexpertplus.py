@@ -29,7 +29,8 @@ LABEL_COLS = [
     "Pleural Effusion", "Pleural Other", "Fracture", "Support Devices",
 ]
 
-DATASET_ROOT = Path(r"C:\Users\lulay\Desktop\research-vlm_cxr\dataset\chexpertplus")
+import os
+DATASET_ROOT = Path(os.environ.get("CHEXPERT_ROOT", "data/chexpertplus"))
 OUT_ROOT = DATASET_ROOT / "preprocessed"
 
 

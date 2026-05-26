@@ -30,7 +30,8 @@ LABEL_COLS = [
     "Pleural Effusion", "Pleural Other", "Fracture", "Support Devices",
 ]
 
-DATASET_ROOT = Path(r"C:\Users\lulay\Desktop\research-vlm_cxr\dataset\mimiccxr")
+import os
+DATASET_ROOT = Path(os.environ.get("MIMIC_ROOT", "data/mimiccxr"))
 OUT_ROOT = DATASET_ROOT / "preprocessed"
 
 

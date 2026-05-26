@@ -60,12 +60,8 @@ class TrainConfig:
     bf16: bool = True
 
     # --- paths ---
-    output_dir: Path = field(
-        default_factory=lambda: Path(r"C:\Users\lulay\Desktop\nlp-image_captioning\result\model_finetuned")
-    )
-    log_dir: Path = field(
-        default_factory=lambda: Path(r"C:\Users\lulay\Desktop\nlp-image_captioning\result\log")
-    )
+    output_dir: Path = field(default_factory=lambda: Path("result/model_finetuned"))
+    log_dir:    Path = field(default_factory=lambda: Path("result/log"))
 
     # --- checkpointing ---
     save_every: int = 1
