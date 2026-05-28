@@ -168,8 +168,8 @@ class Trainer:
         for epoch in range(1, cfg.epochs + 1):
             t0 = time.time()
 
-            # Unfreeze Swin after freeze_vision_epochs
-            if epoch == cfg.freeze_vision_epochs + 1:
+            # Unfreeze Swin after freeze_vision_epochs (skipped when LoRA active)
+            if not cfg.use_lora and epoch == cfg.freeze_vision_epochs + 1:
                 self._unfreeze_vision()
 
             train_loss = self._train_epoch(epoch)

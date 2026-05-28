@@ -2,7 +2,13 @@ model:
   encoder: swin_base          # swin_base | swin_large | vit_base | vit_large | dinov2_base | dinov2_large
   decoder: bert               # bert | clinicalbert | biobert | gpt2 | gpt2_medium
   num_decoder_layers: 2
-  freeze_vision_epochs: 3     # freeze encoder for first N epochs, then unfreeze
+  freeze_vision_epochs: 3     # ignored when lora.enabled: true
+
+lora:
+  enabled: true               # LoRA on encoder backbone; decoder trains fully
+  r: 16
+  alpha: 32
+  dropout: 0.05
 
 dataset:
   use: mimiccxr               # mimiccxr | chexpertplus | combined

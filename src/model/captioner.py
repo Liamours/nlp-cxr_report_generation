@@ -25,6 +25,10 @@ class ImageCaptioner(nn.Module):
         decoder_type: str = "bert",
         num_decoder_layers: int = 2,
         freeze_vision: bool = True,
+        use_lora: bool = False,
+        lora_r: int = 16,
+        lora_alpha: int = 32,
+        lora_dropout: float = 0.05,
     ):
         super().__init__()
         self.encoder = VisualEncoder(encoder_type)
@@ -35,8 +39,26 @@ class ImageCaptioner(nn.Module):
         dec_dim = DECODER_REGISTRY[decoder_type]["hidden_dim"]
         self.visual_proj = nn.Linear(enc_dim, dec_dim)
 
-        if freeze_vision:
+        if use_lora:
+            self._apply_lora(lora_r, lora_alpha, lora_dropout)
+        elif freeze_vision:
             self.encoder.freeze()
+
+    # ---- LoRA --------------------------------------------------------------
+
+    def _apply_lora(self, r: int, alpha: int, dropout: float):
+        """Apply LoRA to encoder backbone only. Decoder trains fully (random init cross-attn)."""
+        from peft import LoraConfig, get_peft_model
+        lora_cfg = LoraConfig(
+            r=r,
+            lora_alpha=alpha,
+            lora_dropout=dropout,
+            target_modules=["q_proj", "v_proj"],  # Swin uses q_proj/v_proj
+            bias="none",
+        )
+        self.encoder.backbone = get_peft_model(self.encoder.backbone, lora_cfg)
+        enc_trainable = sum(p.numel() for p in self.encoder.backbone.parameters() if p.requires_grad)
+        print(f"  LoRA encoder: r={r}  alpha={alpha}  trainable={enc_trainable/1e6:.2f}M")
 
     # ---- helpers -----------------------------------------------------------
 

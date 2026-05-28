@@ -127,9 +127,12 @@ class TextDecoder(nn.Module):
             cfg = BertConfig.from_pretrained(hf_name)
             if num_layers is not None:
                 cfg.num_hidden_layers = num_layers
-            cfg.is_decoder         = True
+            cfg.is_decoder          = True
             cfg.add_cross_attention = True
-            self.model = BertModel(cfg)   # random init (cross-attn not in base BERT)
+            # Load pretrained self-attention weights; cross-attention is randomly init
+            self.model = BertModel.from_pretrained(
+                hf_name, config=cfg, ignore_mismatched_sizes=True
+            )
 
         elif spec["family"] == "gpt2":
             from transformers import GPT2Config, GPT2Model

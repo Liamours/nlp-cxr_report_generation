@@ -14,6 +14,10 @@ _YAML_MAP: dict[tuple[str, str], str] = {
     ("model", "decoder"):               "decoder_type",
     ("model", "num_decoder_layers"):    "num_decoder_layers",
     ("model", "freeze_vision_epochs"):  "freeze_vision_epochs",
+    ("lora", "enabled"):                "use_lora",
+    ("lora", "r"):                      "lora_r",
+    ("lora", "alpha"):                  "lora_alpha",
+    ("lora", "dropout"):                "lora_dropout",
     ("dataset", "use"):                 "dataset",
     ("dataset", "max_seq_len"):         "max_seq_len",
     ("dataset", "image_size"):          "image_size",
@@ -40,7 +44,13 @@ class TrainConfig:
     encoder_type: str = "swin_base"      # see src/model/encoders.ENCODER_REGISTRY
     decoder_type: str = "bert"           # see src/model/decoders.DECODER_REGISTRY
     num_decoder_layers: int = 2
-    freeze_vision_epochs: int = 3        # freeze encoder for first N epochs
+    freeze_vision_epochs: int = 3        # ignored when use_lora=True
+
+    # --- lora ---
+    use_lora: bool = True
+    lora_r: int = 16
+    lora_alpha: int = 32
+    lora_dropout: float = 0.05
 
     # --- dataset ---
     dataset: str = "mimiccxr"           # "mimiccxr" | "chexpertplus" | "combined"

@@ -149,6 +149,10 @@ def main():
         decoder_type=cfg.decoder_type,
         num_decoder_layers=cfg.num_decoder_layers,
         freeze_vision=True,
+        use_lora=cfg.use_lora,
+        lora_r=cfg.lora_r,
+        lora_alpha=cfg.lora_alpha,
+        lora_dropout=cfg.lora_dropout,
     )
 
     if args.resume:

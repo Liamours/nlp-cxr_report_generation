@@ -1,0 +1,36 @@
+model:
+  encoder: swin_base
+  decoder: bert
+  num_decoder_layers: 2
+  freeze_vision_epochs: 0     # ignored — LoRA handles encoder adaptation
+
+lora:
+  enabled: true
+  r: 16                       # rank; higher = more capacity, more params
+  alpha: 32                   # scaling = alpha/r = 2.0
+  dropout: 0.05
+
+dataset:
+  use: chexpertplus
+  max_seq_len: 128
+  image_size: 224
+  num_workers: 0
+
+training:
+  epochs: 2
+  batch_size: 8
+  grad_accum_steps: 4
+  lr: 1.0e-4
+  vision_lr: 1.0e-5
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  bf16: true
+
+paths:
+  output_dir: result/swin_bert_lora_chexpertplus-2605261127
+  log_dir: result/log/swin_bert_lora_chexpertplus-2605261127
+
+checkpointing:
+  save_every: 1
+  keep_last: 3
