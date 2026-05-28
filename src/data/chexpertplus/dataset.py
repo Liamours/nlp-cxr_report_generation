@@ -22,11 +22,7 @@ IMG_MEAN = [0.485, 0.456, 0.406]
 IMG_STD  = [0.229, 0.224, 0.225]
 
 
-def _clean_caption(text) -> str | None:
-    if text is None or isinstance(text, float):
-        return None
-    text = str(text).strip()
-    return text if len(text) >= 10 else None
+from src.util.text_norm import normalize_report_text as _clean_caption
 
 
 def build_transform(image_size: int = 224, augment: bool = False) -> transforms.Compose:
