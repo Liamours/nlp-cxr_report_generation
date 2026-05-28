@@ -62,7 +62,6 @@ class MimicCxrDataset(Dataset):
         augment: bool = False,
         dataset_root: Path = DATASET_ROOT,
     ):
-        self.raw_root = dataset_root / "raw"
         if tokenizer is None:
             from transformers import BertTokenizer
             tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
@@ -82,10 +81,10 @@ class MimicCxrDataset(Dataset):
                 continue
             paths = json.loads(row["image_paths"])
             views = json.loads(row["views"])
+            if not paths:
+                continue
             img_rel = _select_primary_image(paths, views)
-            # Strip 'files/' prefix — raw folder doesn't have that subdir
-            img_rel = img_rel.replace("files/", "", 1)
-            img_path = self.raw_root / img_rel
+            img_path = dataset_root / Path(img_rel.replace("\\", "/"))
             if not img_path.exists():
                 continue
             self.records.append({"image_path": img_path, "caption": cap})
