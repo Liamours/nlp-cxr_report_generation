@@ -56,6 +56,10 @@ def main():
         decoder_type=cfg.decoder_type,
         num_decoder_layers=cfg.num_decoder_layers,
         freeze_vision=False,
+        use_lora=cfg.use_lora,
+        lora_r=cfg.lora_r,
+        lora_alpha=cfg.lora_alpha,
+        lora_dropout=cfg.lora_dropout,
     ).to(device)
     state = torch.load(args.checkpoint, map_location=device, weights_only=True)
     model.load_state_dict(state)

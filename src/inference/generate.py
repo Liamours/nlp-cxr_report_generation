@@ -55,6 +55,10 @@ class ReportGenerator:
             decoder_type=cfg.decoder_type,
             num_decoder_layers=cfg.num_decoder_layers,
             freeze_vision=False,
+            use_lora=cfg.use_lora,
+            lora_r=cfg.lora_r,
+            lora_alpha=cfg.lora_alpha,
+            lora_dropout=cfg.lora_dropout,
         ).to(self.device)
         state = torch.load(checkpoint, map_location=self.device, weights_only=True)
         self.model.load_state_dict(state)
